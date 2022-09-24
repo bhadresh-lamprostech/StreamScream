@@ -1,0 +1,46 @@
+.main{
+    width:70%;
+    margin: auto;
+}
+.cover-img
+{
+    width:70px;
+    height: 70px;
+}
+.card-title{
+        text-align: justify;   
+        padding: 10px;
+        
+}
+.card-title > h1{
+    text-align: inherit;
+
+}
+.card-container{
+    display: flex;
+    margin: auto;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+    padding: 10px;
+}
+.main-card{
+    display: flex;
+    padding: 20px;
+    background-color: rgba(35, 35, 35, 0.5);
+    border-radius: 5px;
+    align-items: flex-start;
+
+}
+
+.date-time{
+    flex-direction: row;
+}
+.book-button{
+    flex-direction: column;
+    border: none;
+    padding: 10px 20px;
+    background: #ff0083 ;
+    color: #ffffff;
+    border-radius: 3px;
+}

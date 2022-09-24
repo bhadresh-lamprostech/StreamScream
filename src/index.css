@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+
+:root {
+  --gradient-color: linear-gradient(
+    90deg,
+    #ff3ba0,
+    #eb0079,
+    #ff0083,
+    #ffc4e2,
+    #ff3ba0,
+    #eb0079,
+    #b1005b
+  );
+}
+
+body {
+  margin: 0;
+  font-family: "RenoMono", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+    "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: rgb(3, 3, 3, 0.95);
+}
+
+button {
+  font-family: "RenoMono";
+  /* margin: 1rem 0; */
+  border: 1px solid #ff0083;
+  border-radius: 10px;
+  color: white;
+  /* padding: 0.5rem 1rem; */
+  background: var(--gradient-color);
+  background-size: 600% 200%;
+  animation: gradient 4s linear infinite;
+  animation-direction: alternate;
+}
+h1 {
+  font-family: "Mars";
+}
+@font-face {
+  font-family: Mars;
+  src: local(Mars), url("./styles/fonts/Mars/Mars\ Bold.ttf");
+  font-weight: bold;
+}
+@font-face {
+  font-family: RenoMono;
+  src: local(RenoMono),
+    url("./styles/fonts/reno-mono/RenoMono/Web-PS/RenoMono.woff2");
+}
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
