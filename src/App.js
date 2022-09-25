@@ -1,4 +1,6 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { WagmiConfig, createClient } from "wagmi";
+import { ConnectKitProvider, ConnectKitButton, getDefaultClient } from "connectkit";
 
 /********************* COMPONENTS ********************/
 import Navbar from "./components/Navbar";
@@ -25,11 +27,22 @@ import { useWeb3React } from "@web3-react/core";
 import { ethers } from "ethers";
 import onebeat from "./artifacts/contracts/OneBeat.sol/OneBeat.json";
 
+
 import metamask from "./components/mm.png";
 import coinbase from "./components/wc.png";
 import CreateNft from "./components/users/generalblocks/CreateNft";
 
-const contractAddress = "0x7242137346A89b53477D880c8cFa03d3CbCDe805";
+const contractAddress = "0x704a3985263437367a61f2bb151ab3cfce8ea668";   //skale contract address
+const alchemyId = process.env.ALCHEMY_ID;
+
+
+
+const client = createClient(
+  getDefaultClient({
+    appName: "Your App Name",
+    alchemyId,
+  }),
+);
 
 function App() {
   const { activate, deactivate } = useWeb3React();
@@ -175,66 +188,73 @@ function App() {
     }, [ref]);
   }
 
+
   useOutsideAlerter(wrapperRef);
   return (
     <div className="App">
       <Router>
-        <Navbar setOpenWalletOption={setOpenWalletOption} />
-        <div className="main-content">
-          <Routes>
-            <Route exact path="/" element={<Home />} />
-            {/* <Route exact path="/" element={<Stream />} /> */}
-            <Route
-              exact
-              path="/live-stream"
-              element={<LiveStreams contract={contract} account={account} />}
-            />
-            <Route
-              exact
-              path="/create-stream"
-              element={<CreateStream contract={contract} account={account} />}
-            />
-            <Route
-              exact
-              path="/schedule-stream"
-              element={
-                <ScheduledStreams contract={contract} account={account} />
-              }
-            />
-            <Route
-              exact
-              path="/streams"
-              element={<AllStreams contract={contract} account={account} />}
-            />
-            <Route
-              exact
-              path="/all-artists"
-              element={<AllArtists contract={contract} account={account} />}
-            />
-            <Route
-              exact
-              path="/all-nfts"
-              element={<AllNfts contract={contract} account={account} />}
-            />
-            <Route exact path="/stream-play" element={<StreamPlay />} />
-            <Route
-              exact
-              path="/make-schedule"
-              element={<MakeSchedule contract={contract} account={account} />}
-            />
-            <Route
-              exact
-              path="/user/"
-              element={<SingleUser contract={contract} account={account} />}
-            />
-            <Route
-              exact
-              path="/profile"
-              element={<Profile contract={contract} account={account} />}
-            />
-            <Route exact path="/create-nft" element={<CreateNft />} />
-          </Routes>
-        </div>
+        <WagmiConfig client={client}>
+          <ConnectKitProvider>
+            <Navbar setOpenWalletOption={setOpenWalletOption} />
+            <div className="main-content">
+              <Routes>
+                <Route exact path="/" element={<Home />} />
+                {/* <Route exact path="/" element={<Stream />} /> */}
+                <Route
+                  exact
+                  path="/live-stream"
+                  element={<LiveStreams contract={contract} account={account} />}
+                />
+                <Route
+                  exact
+                  path="/create-stream"
+                  element={<CreateStream contract={contract} account={account} />}
+                />
+                <Route
+                  exact
+                  path="/schedule-stream"
+                  element={
+                    <ScheduledStreams contract={contract} account={account} />
+                  }
+                />
+                <Route
+                  exact
+                  path="/streams"
+                  element={<AllStreams contract={contract} account={account} />}
+                />
+                <Route
+                  exact
+                  path="/all-artists"
+                  element={<AllArtists contract={contract} account={account} />}
+                />
+                <Route
+                  exact
+                  path="/all-nfts"
+                  element={<AllNfts contract={contract} account={account} />}
+                />
+                <Route exact path="/stream-play" element={<StreamPlay />} />
+                <Route
+                  exact
+                  path="/make-schedule"
+                  element={<MakeSchedule contract={contract} account={account} />}
+                />
+                <Route
+                  exact
+                  path="/user/"
+                  element={<SingleUser contract={contract} account={account} />}
+                />
+                <Route
+                  exact
+                  path="/profile"
+                  element={<Profile contract={contract} account={account} />}
+                />
+                <Route exact path="/create-nft" element={<CreateNft />} />
+              </Routes>
+
+            </div>
+
+          </ConnectKitProvider>
+        </WagmiConfig>
       </Router>
       {openWalletOption ? (
         <div className="alert-main">
@@ -269,6 +289,8 @@ function App() {
                 {/* <div className='image'>
                       <img src={walletconnect} onClick={() => { activate(WalletConnect) }} className="mm" alt="wallet connect image" />
                     </div> */}
+
+
               </div>
             </div>
           </div>

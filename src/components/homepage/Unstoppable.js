@@ -1,5 +1,6 @@
 import UAuth from '@uauth/js'
 import React, {useEffect, useState} from 'react'
+import ud from './assets/default-small.svg'
 
 
 const uauth = new UAuth({
@@ -76,12 +77,10 @@ const Unstoppable: React.FC = () => {
     )
   }
 
-  return <button 
-            className="rounded-lg bg-blue-400 float-right py-3 px-6 ring-2 transition ease-in-out duration-700 transform hover:-translate-y-1 hover:scale-110 m-3 inline-flex items-center bg-gradient-to-r hover:from-white hover:to-blue-500"
-            onClick={handleLogin}>Login With Unstoppable Domain
-           
+  return <button onClick={handleLogin} type="button" class="text-white bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 mr-2 mb-2">
 
-          </button>
+Login With Unstoppable Domain
+</button>
 }
 
 export default Unstoppable

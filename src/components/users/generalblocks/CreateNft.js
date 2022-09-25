@@ -16,7 +16,7 @@ import {
   sha256,
 } from "ethers/lib/utils";
 
-const contractAddress = "0x7242137346A89b53477D880c8cFa03d3CbCDe805";
+const contractAddress = "0x704a3985263437367a61f2bb151ab3cfce8ea668";
 
 const ffmpeg = createFFmpeg({ log: true });
 
