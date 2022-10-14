@@ -9,16 +9,18 @@ import Dropdown from "./users/generalblocks/Dropdown";
 import dropdownsvg from "../styles/Navbar/arrow.svg";
 
 
-
-
-
-
-
-const Navbar = ({ setOpenWalletOption }) => {
+const Navbar = ({ setOpenWalletOption, authClient }) => {
   const cookie = new Cookies();
   const [address, setAddress] = useState(cookie.get("account"));
   const location = useLocation();
   const [dropdown, setDropdown] = useState(false);
+  const [UDUser, setUDUser] = useState(null);
+
+  useEffect(() => {
+    if (cookie.get("UDUser")) {
+      setUDUser(cookie.get("UDUser"))
+    }
+  }, [])
 
   useEffect(() => {
     const addr = cookie.get("account");
@@ -47,6 +49,13 @@ const Navbar = ({ setOpenWalletOption }) => {
       setDropdown(false);
     }
   };
+
+  const logout = () => {
+    authClient.logout();
+    cookie.remove("account");
+    cookie.remove("UDUser");
+    window.location.reload();
+  }
   return (
     <>
       <div className="navbar-main">
@@ -143,6 +152,18 @@ const Navbar = ({ setOpenWalletOption }) => {
                 >
                   <Link to="/profile">Profile</Link>
                 </li>
+                {
+                  UDUser
+                    ?
+                    <>
+                      <li>
+                        {cookie.get("UDUser")}
+                      </li>
+                      <button onClick={() => logout()}>Disconnect</button>
+                    </>
+                    :
+                    null
+                }
               </>
             ) : (
               <li>
@@ -155,7 +176,7 @@ const Navbar = ({ setOpenWalletOption }) => {
                   Connect
                 </button>
 
-                
+
               </li>
             )}
           </ul>

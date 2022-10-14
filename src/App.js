@@ -1,6 +1,6 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import { WagmiConfig, createClient } from "wagmi";
-import { ConnectKitProvider, ConnectKitButton, getDefaultClient } from "connectkit";
+// import { WagmiConfig, createClient, useDisconnect } from "wagmi";
+// import { ConnectKitProvider, ConnectKitButton, getDefaultClient } from "connectkit";
 
 /********************* COMPONENTS ********************/
 import Navbar from "./components/Navbar";
@@ -22,36 +22,41 @@ import "./App.css";
 
 import React, { useState, useRef, useEffect } from "react";
 import Cookies from "universal-cookie";
-import { WalletLinkConnector } from "@web3-react/walletlink-connector";
-import { useWeb3React } from "@web3-react/core";
+// import { WalletLinkConnector } from "@web3-react/walletlink-connector";
+// import { useWeb3React } from "@web3-react/core";
 import { ethers } from "ethers";
 import onebeat from "./artifacts/contracts/OneBeat.sol/OneBeat.json";
 
 
 import metamask from "./components/mm.png";
 import coinbase from "./components/wc.png";
+import ud from "./components/ud.svg"
 import CreateNft from "./components/users/generalblocks/CreateNft";
+import UAuth from '@uauth/js';
+
 
 const contractAddress = "0x704a3985263437367a61f2bb151ab3cfce8ea668";   //skale contract address
 const alchemyId = process.env.ALCHEMY_ID;
 
 
 
-const client = createClient(
-  getDefaultClient({
-    appName: "Your App Name",
-    alchemyId,
-  }),
-);
+// const client = createClient(
+//   getDefaultClient({
+//     appName: "Your App Name",
+//     alchemyId,
+//   }),
+// );
 
 function App() {
-  const { activate, deactivate } = useWeb3React();
+  // const { activate, deactivate } = useWeb3React();
   const [openWalletOption, setOpenWalletOption] = useState(false);
   // const [address, setAddress] = useState("");
   const [haveMetamask, sethaveMetamask] = useState(true);
   const [accountAddress, setAccountAddress] = useState("");
   const [accountBalance, setAccountBalance] = useState("");
   const [isConnected, setIsConnected] = useState(false);
+  const [authClient, setAuthClient] = useState(null);
+
 
   //
   const [loading, setLoading] = useState(true);
@@ -103,11 +108,11 @@ function App() {
 
   const connected = cookie.get("account");
 
-  const CoinbaseWallet = new WalletLinkConnector({
-    url: `https://mainnet.infura.io/v3/${process.env.INFURA_KEY}`,
-    appName: "Web3-react Demo",
-    supportedChainIds: [1, 3, 4, 5, 42, 137],
-  });
+  // const CoinbaseWallet = new WalletLinkConnector({
+  //   url: `https://mainnet.infura.io/v3/${process.env.INFURA_KEY}`,
+  //   appName: "Web3-react Demo",
+  //   supportedChainIds: [1, 3, 4, 5, 42, 137],
+  // });
 
   // const WalletConnect = new WalletConnectConnector({
   //   rpcUrl: `https://mainnet.infura.io/v3/${process.env.INFURA_KEY}`,
@@ -150,6 +155,26 @@ function App() {
     }
   }, [connected]);
 
+  useEffect(() => {
+    const uauth = new UAuth({
+      clientID: "4c817aad-7c5c-4076-915e-1643f63d5d13",
+      redirectUri: "http://localhost:3000",
+      scope: "openid wallet"
+    });
+    setAuthClient(uauth);
+
+    uauth.loginCallback()
+      .then((res) => {
+        console.log(res);
+        cookie.set("account", res.authorization.idToken.wallet_address, { path: "/", maxAge: 3600 });
+        cookie.set("UDUser", res.authorization.idToken.sub, { path: "/", maxAge: 3600 });
+        window.location.reload();
+      })
+      .catch(err => {
+        console.log(err);
+      })
+  }, []);
+
   const connectWallet = async () => {
     try {
       if (!ethereum) {
@@ -190,71 +215,72 @@ function App() {
 
 
   useOutsideAlerter(wrapperRef);
+
+  const UDConnect = async () => {
+    const authorization = await authClient.login();
+    console.log(authorization);
+  }
   return (
     <div className="App">
       <Router>
-        <WagmiConfig client={client}>
-          <ConnectKitProvider>
-            <Navbar setOpenWalletOption={setOpenWalletOption} />
-            <div className="main-content">
-              <Routes>
-                <Route exact path="/" element={<Home />} />
-                {/* <Route exact path="/" element={<Stream />} /> */}
-                <Route
-                  exact
-                  path="/live-stream"
-                  element={<LiveStreams contract={contract} account={account} />}
-                />
-                <Route
-                  exact
-                  path="/create-stream"
-                  element={<CreateStream contract={contract} account={account} />}
-                />
-                <Route
-                  exact
-                  path="/schedule-stream"
-                  element={
-                    <ScheduledStreams contract={contract} account={account} />
-                  }
-                />
-                <Route
-                  exact
-                  path="/streams"
-                  element={<AllStreams contract={contract} account={account} />}
-                />
-                <Route
-                  exact
-                  path="/all-artists"
-                  element={<AllArtists contract={contract} account={account} />}
-                />
-                <Route
-                  exact
-                  path="/all-nfts"
-                  element={<AllNfts contract={contract} account={account} />}
-                />
-                <Route exact path="/stream-play" element={<StreamPlay />} />
-                <Route
-                  exact
-                  path="/make-schedule"
-                  element={<MakeSchedule contract={contract} account={account} />}
-                />
-                <Route
-                  exact
-                  path="/user/"
-                  element={<SingleUser contract={contract} account={account} />}
-                />
-                <Route
-                  exact
-                  path="/profile"
-                  element={<Profile contract={contract} account={account} />}
-                />
-                <Route exact path="/create-nft" element={<CreateNft />} />
-              </Routes>
+        <Navbar setOpenWalletOption={setOpenWalletOption} authClient={authClient} />
+        <div className="main-content">
+          <Routes>
+            <Route exact path="/" element={<Home />} />
+            {/* <Route exact path="/" element={<Stream />} /> */}
+            <Route
+              exact
+              path="/live-stream"
+              element={<LiveStreams contract={contract} account={account} />}
+            />
+            <Route
+              exact
+              path="/create-stream"
+              element={<CreateStream contract={contract} account={account} />}
+            />
+            <Route
+              exact
+              path="/schedule-stream"
+              element={
+                <ScheduledStreams contract={contract} account={account} />
+              }
+            />
+            <Route
+              exact
+              path="/streams"
+              element={<AllStreams contract={contract} account={account} />}
+            />
+            <Route
+              exact
+              path="/all-artists"
+              element={<AllArtists contract={contract} account={account} />}
+            />
+            <Route
+              exact
+              path="/all-nfts"
+              element={<AllNfts contract={contract} account={account} />}
+            />
+            <Route exact path="/stream-play" element={<StreamPlay />} />
+            <Route
+              exact
+              path="/make-schedule"
+              element={<MakeSchedule contract={contract} account={account} />}
+            />
+            <Route
+              exact
+              path="/user/"
+              element={<SingleUser contract={contract} account={account} />}
+            />
+            <Route
+              exact
+              path="/profile"
+              element={<Profile contract={contract} account={account} />}
+            />
+            <Route exact path="/create-nft" element={<CreateNft />} />
+          </Routes>
 
-            </div>
+        </div>
 
-          </ConnectKitProvider>
-        </WagmiConfig>
       </Router>
       {openWalletOption ? (
         <div className="alert-main">
@@ -275,11 +301,22 @@ function App() {
                     alt="metamask"
                   />
                 </div>
-                <div className="image">
+                {/* <div className="image">
                   <img
                     src={coinbase}
                     onClick={() => {
                       activate(CoinbaseWallet);
+                    }}
+                    title="coinbase"
+                    className="mm"
+                    alt="coinbase"
+                  />
+                </div> */}
+                <div className="image">
+                  <img
+                    src={ud}
+                    onClick={() => {
+                      UDConnect();
                     }}
                     title="coinbase"
                     className="mm"
