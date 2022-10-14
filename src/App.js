@@ -157,7 +157,7 @@ function App() {
 
   useEffect(() => {
     const uauth = new UAuth({
-      clientID: "0585f82e-a745-4ce5-9c19-51cfa14aac30",
+      clientID: "a5b4356d-97c6-4849-a21d-ecc292d255e1",
       redirectUri: "https://stream-scream.vercel.app",
       scope: "openid wallet"
     });
